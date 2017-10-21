@@ -11,7 +11,7 @@ button_element = 'md-hidden'
 time = time.strftime('%I:%M:%S')
 
 forming = 'building request'
-seperator = '–––––––––––––––––––––––––––––––––––––––––'
+seperator = '––––––––––––––––––––––––––––––––––––––––––––––––––'
 
 #xpath
 # //*[contains(@class, 'col-pax-item selectable-blue-arrow col-xs-12 col-xs-pad-0 clearfix'), (@button, '')]
