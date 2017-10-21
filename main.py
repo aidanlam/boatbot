@@ -3,27 +3,20 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 import requests
 import os
-from lxml import etree, html
+import html
+import htmlmin
+import time
+from random import randint
+import logging
 
-###pkill -f firefox 
-### to close all 
+wait = randint(10, 15)
 
-
-#page = requests.get(base_link) 
-#soup = BeautifulSoup(page.content, 'html.parser')
-
-#element = soup.find_all('button', class_=button_element)
-#element = soup.find_all('button', class_=button_element)[0].get_text()
-
-
-
-#print(element)
-
+start()
+	
 driver = webdriver.Firefox() #Start a new driver session
 
 def start_session(link, element):
 	"""Creates a new stateroom session."""
-
 	try:
 		driver.get(link) #Goto the webpage
 		driver.find_element_by_class_name(element).click() #Find the element and click on it 'md-hidden'
@@ -49,38 +42,62 @@ def get_status(link):
 
 status = get_status(base_link)
 
-#Session info - start
+
 print(seperator)
-print('[{}] Request Made -> Status : {}'.format(time, status))
-
-#Session info - getting info and stuff
-session = start_session(base_link, button_element) #make a new session
-
-print('[{}] Request Finished -> Token : {}'.format(time, get_token(session)))
-print('[{}] Session Link -> {}'.format(time, session)) #prints the session link
-# REMOVE QUITdriver.quit() #quits the current session to prevent lag
+print('[{}] Request Made -> Status : {}'.format(get_time, status))
+session = start_session(base_link, button_element)
+print('[{}] Request Finished -> Token : {}'.format(get_time, get_token(session)))
+print('[{}] Session Link -> {}'.format(get_time, session)) 
 
 
 # --> now we need to see if the rooms are sold out 
 
 
 status = get_status(session)
-print('[{}] Using Session Link to check Stateroom Status -> {}'.format(time, status))
+print('[{}] Using Session Link to check Stateroom Status -> {}'.format(get_time, get_token(session)))
 
 stateroom_xpath = '//button[@data-num-pax="4"]'
 driver.find_element_by_xpath(stateroom_xpath).click()
-stateroom_prices_xpath = "//section[@id='stateroom-meta']"
-get_stateroom_prices = driver.find_element_by_xpath(stateroom_prices_xpath).text
 
-#print(get_stateroom_prices)
-print(etree.tostring(get_stateroom_prices, encoding='unicode', pretty_print=True))
+#We need to wait for the element to load or else we get 
+#../what_happends_when_we_dont_await.html
+stateroom_prices_xpath = "//section[@id='stateroom-meta']"
+
+#update 7s isnt enough
+print('[{}] Waiting for ({}) to load. -> About : -{}s'.format(get_time, stateroom_prices_xpath, wait))
+time.sleep(wait) #Wait for 15 sescons
+
+
+element = driver.find_element_by_xpath(stateroom_prices_xpath).get_attribute('innerHTML')
+compressing_status = 'Working'
+print('[{}] Compressing HTML -> Working [{}]'.format(get_time, compressing_status))
+global stateroom_element
+try:
+	stateroom_element = htmlmin.minify(element, remove_empty_space=True)
+	compressing_status = 'Done'
+	print('[{}] Compressing HTML -> Working [{}]'.format(get_time, compressing_status))
+except:
+	stateroom_element = element
+	compressing_status = 'Error'
+	print('[{}] Compressing HTML -> Working [{}]'.format(get_time, compressing_status))
+
+
+time.sleep(2)
+print('[{}] Stateroom Price Data Found -> Analyzing Data'.format(get_time))
+
+#USED FOR TEST
+#stateroom_element = 'Sold Out Sold Out Sold Out Sold Out Sol'
+
+if stateroom_element.count(sold_out) == 5:
+	print('[{}] Analyzing Data is Finished -> Rooms are still sould out.'.format(get_time))
+	#restart the timer
+else:
+	print('[{}] Analyzing Data is Finished -> Rooms Open'.format(get_time))
+	print('[{}] Sending notificiation -> Working'.format(get_time))
+
+		#now we try to send the notificiation
+
+		#restart the timer even tho the room is open cuz we want to know about the room!
 
 print(seperator)
-
-#driver.quit() Add this in later - removed for testing
-
-
-
-
-
-
+driver.close()
