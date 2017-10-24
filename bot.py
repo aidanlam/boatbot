@@ -3,7 +3,6 @@ from selenium import webdriver
 import re
 import sys
 
-
 clean()
 config = config()
 
@@ -40,11 +39,3 @@ if stateroom_element.count('Sold Out') == 5:
 else:
 	message('Analyzing Data Finished -> A Room is Available')
 	#TODO Notify
-
-
-
-
-
-
-
-
