@@ -80,31 +80,7 @@ def voyage():
 
 	return voyage
 
-
 def line():
 	"""Prints a line."""
 	line = '–––––––––––––––––––––––––––––––––––––––––'
 	print(line)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
