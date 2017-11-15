@@ -54,12 +54,7 @@ def config():
 	except:
 		error('Loading Config')
 
-	#Checks to see if the voyage info is filled out.
-	voyage = data['voyage']
-	if not voyage:
-		error('Missing Voyage Link in config.yaml')
-	else:
-		return data
+	
 
 def profile():
 	"""Sets up the driver profile."""
@@ -72,12 +67,25 @@ def profile():
 
 	return profile
 
+def webhook():
+	"""Gets the webhook url."""
+
+	data = config()
+	webhook = data['webhook_url']
+	return webhook
+
 def voyage():
 	"""Gets the Voyage link."""
 
 	data = config()
+
 	voyage = data['voyage']
 
+	if not voyage:
+		error('Missing Voyage Link in config.yaml')
+	else:
+		pass
+		
 	return voyage
 
 
