@@ -1,0 +1,3 @@
+voyage = ""
+guests = ""
+webhook = ""
